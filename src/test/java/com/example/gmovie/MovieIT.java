@@ -1,7 +1,6 @@
 package com.example.gmovie;
 
 import com.example.gmovie.controller.MovieDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +19,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -96,7 +93,8 @@ public class MovieIT {
                 .andExpect(status().isOk())
                 .andReturn();
         String movieDtoString = mvcResultget.getResponse().getContentAsString();
-        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {});
+        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {
+        });
         assertThat("", returnedMovieDtoList.size(), is(1));
         assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
     }
@@ -152,7 +150,8 @@ public class MovieIT {
                 .andReturn();
         //Validate for First
         String movieDtoString = mvcResultget.getResponse().getContentAsString();
-        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {});
+        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {
+        });
         assertThat("", returnedMovieDtoList.size(), is(2));
         assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
     }
@@ -187,11 +186,13 @@ public class MovieIT {
                 .andReturn();
         //Validate for First
         String movieDtoString = mvcResultget.getResponse().getContentAsString();
-        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {});
+        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {
+        });
         assertThat("", returnedMovieDtoList.size(), is(2));
         assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
         assertThat("", returnedMovieDtoList.get(1).getTitle(), is(movieDtoSecond.getTitle()));
     }
+
     /**
      * Given an existing movie
      * When I submit a 5 star rating
@@ -200,13 +201,38 @@ public class MovieIT {
     @Test
     @DisplayName("Submit rating for a movie")
     public void submitRatingAndSeeDetails() throws Exception {
-//        MovieDto movieDto = new MovieDto()
-//        movieDto.setTitle("Titanic");
-//        mockMvc.perform(post(baseURL + "/movies")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(movieDto))
-//        ).andExpect(status().isCreated()
-//        ).andReturn();
+        MovieDto movieDto = new MovieDto();
+        movieDto.setTitle("Titanic");
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+
+        MvcResult mvcResult = mockMvc.perform(get(baseURL + "/movies/" + movieDto.getTitle())
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        String movieDtoString = mvcResult.getResponse().getContentAsString();
+        MovieDto returnedMovieDto = objectMapper.readValue(movieDtoString, MovieDto.class);
+        assertThat("", returnedMovieDto.getRating(), is(0.0f));
+
+        movieDto.setRating(5.0f);
+        mockMvc.perform(put(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isOk()
+        ).andReturn();
+
+        mvcResult = mockMvc.perform(get(baseURL + "/movies/" + movieDto.getTitle())
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        movieDtoString = mvcResult.getResponse().getContentAsString();
+        returnedMovieDto = objectMapper.readValue(movieDtoString, MovieDto.class);
+        assertThat("", returnedMovieDto.getRating(), is(2.5f));
     }
 
     /**
@@ -240,10 +266,11 @@ public class MovieIT {
                 .andReturn();
         //Validate for First
         String movieDtoString = mvcResultget.getResponse().getContentAsString();
-        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {});
+        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {
+        });
         assertThat("", returnedMovieDtoList.size(), is(1));
         assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
-        assertThat("",returnedMovieDtoList.get(0).getRating(),is(4.0f) );
+        assertThat("", returnedMovieDtoList.get(0).getRating(), is(4.0f));
     }
 
     /**
