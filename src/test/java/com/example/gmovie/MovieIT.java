@@ -3,7 +3,6 @@ package com.example.gmovie;
 import com.example.gmovie.controller.MovieDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +12,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -57,8 +58,18 @@ public class MovieIT {
      */
     @Test
     @DisplayName("Submit a movie")
-    @Disabled
-    public void submitMovie() {
+    public void submitMovie() throws Exception {
+        MovieDto movieDto = new MovieDto("Speed", 5.0f);
+        MvcResult mvcResult = mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+
+        String movieDtoString = mvcResult.getResponse().getContentAsString();
+        MovieDto returnedMovieDto = objectMapper.readValue(movieDtoString, MovieDto.class);
+
+        assertThat("", returnedMovieDto, is(movieDto));
     }
 
     /**
