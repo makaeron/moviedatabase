@@ -179,6 +179,18 @@ public class MovieIT {
     @Test
     @DisplayName("Submit rating for a movie")
     public void submitRatingAndSeeDetails() throws Exception {
+
+        //Assertion
+    }
+
+    /**
+     * Given a movie with one 5 star rating and one 3 star rating
+     * When I view the movie details
+     * Then I expect the star rating to be 4.
+     */
+    @Test
+    @DisplayName("Submit two ratings to see an average")
+    public void submitTwoRatingsAndSeeAverageInDetail() throws Exception {
         //post one
         MovieDto movieDto = new MovieDto("Titanic", 3.0f);
         mockMvc.perform(post(baseURL + "/movies")
@@ -206,17 +218,6 @@ public class MovieIT {
         assertThat("", returnedMovieDtoList.size(), is(1));
         assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
         assertThat("",returnedMovieDtoList.get(0).getRating(),is(4.0f) );
-        //Assertion
-    }
-
-    /**
-     * Given a movie with one 5 star rating and one 3 star rating
-     * When I view the movie details
-     * Then I expect the star rating to be 4.
-     */
-    @Test
-    @DisplayName("Submit two ratings to see an average")
-    public void submitTwoRatingsAndSeeAverageInDetail() {
     }
 
     /**
