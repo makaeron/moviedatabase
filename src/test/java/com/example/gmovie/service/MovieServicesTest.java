@@ -36,9 +36,9 @@ public class MovieServicesTest {
     @DisplayName("No Movie")
     public void noMovie() {
         when(movieRepository.findAll()).thenReturn(new ArrayList<>());
-
+        //Exercise
         List<Movie> movies = movieService.view();
-
+        //assert
         verify(movieRepository).findAll();
         assertThat(movies, is(empty()));
     }
@@ -51,6 +51,14 @@ public class MovieServicesTest {
     @Test
     @DisplayName("Submit a movie")
     public void submitMovie() {
+        //Setup
+        Movie movie = new Movie(1L);// 1L is using pojo class
+        when(movieRepository.save(movie)).thenReturn(movie);
+        //Exercise
+        Movie savedMovie = movieService.submit(movie);
+        //Assertion
+        verify(movieRepository).save(movie);
+        assertThat(savedMovie,is(movie));
     }
 
     /**
