@@ -19,12 +19,12 @@ public class MovieService {
         return movieRepository.findAll();
     }
 
-    public Movie submit(Movie movie) {
-        return movieRepository.save(movie);
-    }
-
     public Movie view(String title) {
         return movieRepository.findByTitle(title);
+    }
+
+    public Movie submit(Movie movie) {
+        return movieRepository.save(movie);
     }
 
     public void setRating(String title, float rating) {

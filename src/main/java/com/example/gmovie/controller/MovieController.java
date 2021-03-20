@@ -3,9 +3,11 @@ package com.example.gmovie.controller;
 import com.example.gmovie.model.Movie;
 import com.example.gmovie.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.JsonPath;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,16 @@ public class MovieController {
                 .map(m -> new MovieDto(m.getTitle(), m.getRating()))
                         .collect(Collectors.toList());
         return movieDtoList;
+    }
+
+    @GetMapping("/movies/{title}")
+    @ResponseStatus(HttpStatus.OK)
+    public MovieDto view(@PathVariable String title) {
+        Movie movie = movieService.view(title);
+        MovieDto movieDto = new MovieDto();
+        movieDto.setTitle(movie.getTitle());
+        movieDto.setRating(movie.getRating());
+        return movieDto;
     }
 
     @PostMapping("/movies")

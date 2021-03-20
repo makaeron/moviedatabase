@@ -101,6 +101,27 @@ public class MovieIT {
         assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
     }
 
+    @Test
+    @DisplayName("Visit with title when DB has one movie")
+    public void getWithTitleWhenDbHasOneMovie() throws Exception {
+        //post one
+        MovieDto movieDto = new MovieDto("Titanic", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //get movie
+        MvcResult mvcResult = mockMvc.perform(get(baseURL + "/movies/Titanic")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        String movieDtoString = mvcResult.getResponse().getContentAsString();
+        MovieDto returnedMovieDto = objectMapper.readValue(movieDtoString, MovieDto.class);
+        assertThat("", returnedMovieDto.getTitle(), is(movieDto.getTitle()));
+    }
+
     /**
      * Given the GBDB has many movies
      * When I visit GMDB movies
@@ -139,7 +160,7 @@ public class MovieIT {
     /**
      * Given the GBDB has many movies
      * When I visit GMDB movies
-         * Then I should see a list with that movie
+     * Then I should see a list with that movie
      */
     @Test
     @DisplayName("Visit all movies when DB has many movie")
@@ -179,8 +200,13 @@ public class MovieIT {
     @Test
     @DisplayName("Submit rating for a movie")
     public void submitRatingAndSeeDetails() throws Exception {
-
-        //Assertion
+//        MovieDto movieDto = new MovieDto()
+//        movieDto.setTitle("Titanic");
+//        mockMvc.perform(post(baseURL + "/movies")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(movieDto))
+//        ).andExpect(status().isCreated()
+//        ).andReturn();
     }
 
     /**
