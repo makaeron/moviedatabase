@@ -293,5 +293,29 @@ public class MovieIT {
     @DisplayName("Submit Description without a Rating")
     public void submitDescriptionWithoutRating() {
     }
+
+    /**
+     *     Rule: Movie details include title, director, actors, release year, description and star rating.
+     *
+     *     Given the GMDB has many movies
+     *     When I visit GMDB movies with an existing title
+     *     Then I should see that movie's details
+     */
+    @Test
+    public void viewMovieDetails() {
+
+    }
+
+    /**
+     *     Rule: Movie details include title, director, actors, release year, description and star rating.
+     *
+     *     Given the GMDB has many movies
+     *     When I visit GMDB movies with a non-existing title
+     *     Then I receive a friendly message that it doesn't exist
+     *
+     */
+    @Test
+    public void viewNonExistMovieDetails() {
+    }
 }
 
