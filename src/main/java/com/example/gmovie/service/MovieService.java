@@ -27,7 +27,7 @@ public class MovieService {
         return movieRepository.findByTitle(title);
     }
 
-    public void setRating(String title, int rating) {
+    public void setRating(String title, float rating) {
         Movie movie = movieRepository.findByTitle(title);
         movie.setRating((movie.getRating() + rating) / 2);
         movieRepository.save(movie);

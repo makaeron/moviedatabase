@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -177,8 +178,35 @@ public class MovieIT {
      */
     @Test
     @DisplayName("Submit rating for a movie")
-    public void submitRatingAndSeeDetails() {
+    public void submitRatingAndSeeDetails() throws Exception {
+        //post one
+        MovieDto movieDto = new MovieDto("Titanic", 3.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        movieDto.setRating(5.0f);
+        mockMvc.perform(put(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isOk()
+        ).andReturn();
 
+        //Exercise
+        //get movie
+        MvcResult mvcResultget = mockMvc.perform(get(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        //Validate for First
+        String movieDtoString = mvcResultget.getResponse().getContentAsString();
+        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {});
+        assertThat("", returnedMovieDtoList.size(), is(1));
+        assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
+        assertThat("",returnedMovieDtoList.get(0).getRating(),is(4.0f) );
+        //Assertion
     }
 
     /**

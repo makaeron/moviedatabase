@@ -36,4 +36,14 @@ public class MovieController {
         MovieDto savedMovieDto = new MovieDto(savedMovie.getTitle(), savedMovie.getRating());
         return savedMovieDto;
     }
+
+    @PutMapping("/movies")
+    public MovieDto update(@RequestBody MovieDto movieDto){
+        Movie movie = new Movie();
+        //movie.setRating(movieDto.getRating();
+        movieService.setRating(movieDto.getTitle(),movieDto.getRating());
+        Movie updateMovie = movieService.view(movieDto.getTitle());
+        MovieDto updatedMovieDto = new MovieDto(updateMovie.getTitle(),updateMovie.getRating());
+        return updatedMovieDto;
+    }
 }

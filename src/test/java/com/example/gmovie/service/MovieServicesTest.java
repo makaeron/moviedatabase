@@ -164,7 +164,7 @@ public class MovieServicesTest {
         assertThat(movie.getRating(),is(5.0F));
         assertThat(movie,is(terminator));
 
-        movieService.setRating(terminator.getTitle(), 3);
+        movieService.setRating(terminator.getTitle(), 3.0F);
 
         movie = movieService.view(terminator.getTitle());
         assertThat(movie.getRating(),is(4.0F));
