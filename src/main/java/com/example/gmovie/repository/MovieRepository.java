@@ -7,7 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
     Movie findByTitle(String title);
-
-    Movie submitRating(float rating);
-
 }
