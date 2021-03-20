@@ -1,6 +1,7 @@
 package com.example.gmovie;
 
 import com.example.gmovie.controller.MovieDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,10 +64,8 @@ public class MovieIT {
                 .content(objectMapper.writeValueAsString(movieDto))
         ).andExpect(status().isCreated()
         ).andReturn();
-
         String movieDtoString = mvcResult.getResponse().getContentAsString();
         MovieDto returnedMovieDto = objectMapper.readValue(movieDtoString, MovieDto.class);
-
         assertThat("", returnedMovieDto, is(movieDto));
     }
 
@@ -77,7 +76,25 @@ public class MovieIT {
      */
     @Test
     @DisplayName("Visit when DB has one movie")
-    public void getWhenDbHasOneMovie() {
+    public void getWhenDbHasOneMovie() throws Exception {
+        //post one
+        MovieDto movieDto = new MovieDto("Titanic", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //get movie
+        MvcResult mvcResultget = mockMvc.perform(get(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        String movieDtoString = mvcResultget.getResponse().getContentAsString();
+        MovieDto returnedMovieDto = objectMapper.readValue(movieDtoString, MovieDto.class);
+        assertThat(returnedMovieDto.getTitle(), is(movieDto.getTitle()));
+        //getBytitle
+        //
     }
 
     /**
