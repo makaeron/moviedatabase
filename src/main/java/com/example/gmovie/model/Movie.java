@@ -20,7 +20,7 @@ public class Movie {
 
     private String title;
 
-    private int rating;
+    private float rating;
 
 
 }

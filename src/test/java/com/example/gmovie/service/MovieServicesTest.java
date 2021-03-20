@@ -149,6 +149,25 @@ public class MovieServicesTest {
     @Test
     @DisplayName("Submit two ratings to see an average")
     public void submitTwoRatingsAndSeeAverageInDetail() {
+        //List<Movie> oneMovieList = Arrays.asList(new Movie[] {new Movie()});
+        Movie terminator = new Movie();
+        terminator.setId(2L);
+        terminator.setTitle("terminator");
+        terminator.setRating(5);
+
+        when(movieRepository.save(terminator)).thenReturn(terminator);
+        when(movieRepository.findByTitle(terminator.getTitle())).thenReturn(terminator);
+
+        //Execution
+        movieService.submit(terminator);
+        Movie movie = movieService.view(terminator.getTitle());
+        assertThat(movie.getRating(),is(5.0F));
+        assertThat(movie,is(terminator));
+
+        movieService.setRating(terminator.getTitle(), 3);
+
+        movie = movieService.view(terminator.getTitle());
+        assertThat(movie.getRating(),is(4.0F));
     }
 
     /**

@@ -18,10 +18,15 @@ public class MovieService {
 
     public Movie submit(Movie movie) {
         return movieRepository.save(movie);
-
     }
 
     public Movie view(String title) {
         return movieRepository.findByTitle(title);
+    }
+
+    public void setRating(String title, int rating) {
+        Movie movie = movieRepository.findByTitle(title);
+        movie.setRating((movie.getRating() + rating) / 2);
+        movieRepository.save(movie);
     }
 }
