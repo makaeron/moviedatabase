@@ -87,6 +87,12 @@ public class MovieServicesTest {
     @Test
     @DisplayName("Visit a movie when DB has many movie")
     public void visitAMovieWhenDbHasManyMovies() {
+        when(movieRepository.findAll()).thenReturn(Arrays.asList(new Movie[] {new Movie(), new Movie()}));
+        //Exercise
+        List<Movie> movies = movieService.view();
+        verify(movieRepository).findAll();
+        //Return array List same as submit
+        assertThat(movies,is(Arrays.asList(new Movie[] {new Movie(), new Movie()})));
     }
 
     /**
