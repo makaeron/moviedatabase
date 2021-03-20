@@ -1,12 +1,31 @@
 package com.example.gmovie.service;
 
+import com.example.gmovie.model.Movie;
+import com.example.gmovie.repository.MovieRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MovieServicesTest {
+
+    @Mock
+    private MovieRepository movieRepository;
+
+    @InjectMocks
+    private MovieService movieService;
 
     /**
      *     Given the GBDB is empty
@@ -16,6 +35,12 @@ public class MovieServicesTest {
     @Test
     @DisplayName("No Movie")
     public void noMovie() {
+        when(movieRepository.findAll()).thenReturn(new ArrayList<>());
+
+        List<Movie> movies = movieService.view();
+
+        verify(movieRepository).findAll();
+        assertThat(movies, is(empty()));
     }
 
      /**
