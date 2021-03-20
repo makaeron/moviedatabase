@@ -2,6 +2,7 @@ package com.example.gmovie;
 
 import com.example.gmovie.controller.MovieDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -91,10 +95,9 @@ public class MovieIT {
                 .andExpect(status().isOk())
                 .andReturn();
         String movieDtoString = mvcResultget.getResponse().getContentAsString();
-        MovieDto returnedMovieDto = objectMapper.readValue(movieDtoString, MovieDto.class);
-        assertThat(returnedMovieDto.getTitle(), is(movieDto.getTitle()));
-        //getBytitle
-        //
+        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {});
+        assertThat("", returnedMovieDtoList.size(), is(1));
+        assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
     }
 
     /**
