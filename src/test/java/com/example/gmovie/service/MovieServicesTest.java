@@ -70,13 +70,14 @@ public class MovieServicesTest {
     @Test
     @DisplayName("Visit when DB has one movie")
     public void getWhenDbHasOneMovie() {
-        when(movieRepository.findAll()).thenReturn(Arrays.asList(new Movie[] {new Movie()}));
+        List<Movie> oneMovieList = Arrays.asList(new Movie[] {new Movie()});
+        when(movieRepository.findAll()).thenReturn(oneMovieList);
         //Here Movie created Movie with no id
         //Exercise
         List<Movie> movies = movieService.view();
         //assert
+        assertThat(movies,is(oneMovieList));
         verify(movieRepository).findAll();
-        assertThat(movies,is(Arrays.asList(new Movie[] {new Movie()})));
     }
 
     /**
@@ -87,12 +88,13 @@ public class MovieServicesTest {
     @Test
     @DisplayName("Visit a movie when DB has many movie")
     public void visitAMovieWhenDbHasManyMovies() {
-        when(movieRepository.findAll()).thenReturn(Arrays.asList(new Movie[] {new Movie(), new Movie()}));
+        List<Movie> twoMovieList = Arrays.asList(new Movie[] {new Movie(), new Movie()});
+        when(movieRepository.findAll()).thenReturn(twoMovieList);
         //Exercise
         List<Movie> movies = movieService.view();
         verify(movieRepository).findAll();
         //Return array List same as submit
-        assertThat(movies,is(Arrays.asList(new Movie[] {new Movie(), new Movie()})));
+        assertThat(movies,is(twoMovieList));
     }
 
     /**
