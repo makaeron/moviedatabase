@@ -53,7 +53,8 @@ public class MovieServicesTest {
     @DisplayName("Submit a movie")
     public void submitMovie() {
         //Setup
-        Movie movie = new Movie(1L);// 1L is using pojo class
+        Movie movie = new Movie();// 1L is using pojo class
+        movie.setId(1L);
         when(movieRepository.save(movie)).thenReturn(movie);
         //Exercise
         Movie savedMovie = movieService.submit(movie);
@@ -88,13 +89,15 @@ public class MovieServicesTest {
     @Test
     @DisplayName("Visit a movie when DB has many movie")
     public void visitAMovieWhenDbHasManyMovies() {
-        List<Movie> twoMovieList = Arrays.asList(new Movie[] {new Movie(), new Movie()});
-        when(movieRepository.findAll()).thenReturn(twoMovieList);
+        Movie terminator = new Movie();
+        terminator.setTitle("Terminator");
+
+        when(movieRepository.findByTitle(terminator.getTitle())).thenReturn(terminator);
         //Exercise
-        List<Movie> movies = movieService.view();
-        verify(movieRepository).findAll();
+        Movie movie = movieService.view(terminator.getTitle());
+        verify(movieRepository).findByTitle(terminator.getTitle());
         //Return array List same as submit
-        assertThat(movies,is(twoMovieList));
+        assertThat(movie,is(terminator));
     }
 
     /**
@@ -105,6 +108,13 @@ public class MovieServicesTest {
     @Test
     @DisplayName("Visit all movies when DB has many movie")
     public void visitWhenDbHasManyMovies() {
+        List<Movie> twoMovieList = Arrays.asList(new Movie[] {new Movie(), new Movie()});
+        when(movieRepository.findAll()).thenReturn(twoMovieList);
+        //Exercise
+        List<Movie> movies = movieService.view();
+        verify(movieRepository).findAll();
+        //Return array List same as submit
+        assertThat(movies,is(twoMovieList));
     }
 
     /**

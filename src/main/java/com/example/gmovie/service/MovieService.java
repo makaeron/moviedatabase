@@ -20,4 +20,8 @@ public class MovieService {
         return movieRepository.save(movie);
 
     }
+
+    public Movie view(String title) {
+        return movieRepository.findByTitle(title);
+    }
 }
