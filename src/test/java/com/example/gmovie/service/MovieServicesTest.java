@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -69,6 +70,13 @@ public class MovieServicesTest {
     @Test
     @DisplayName("Visit when DB has one movie")
     public void getWhenDbHasOneMovie() {
+        when(movieRepository.findAll()).thenReturn(Arrays.asList(new Movie[] {new Movie()}));
+        //Here Movie created Movie with no id
+        //Exercise
+        List<Movie> movies = movieService.view();
+        //assert
+        verify(movieRepository).findAll();
+        assertThat(movies,is(Arrays.asList(new Movie[] {new Movie()})));
     }
 
     /**
