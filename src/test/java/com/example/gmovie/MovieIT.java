@@ -280,9 +280,8 @@ public class MovieIT {
      */
     @Test
     @DisplayName("Submit Rating and Description to see in Detail")
-    public void submitRatingAndDescriptionToSeeThemInDetails() {
+    public void submitRatingAndDescriptionToSeeThemInDetails() throws Exception {
     }
-
 
     /**
      * Given an existing movie
@@ -302,8 +301,31 @@ public class MovieIT {
      *     Then I should see that movie's details
      */
     @Test
-    public void viewMovieDetails() {
-
+    public void viewMovieDetails() throws Exception {
+        //post one
+        MovieDto movieDto = new MovieDto("Titanic", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //post Second
+        MovieDto movieDtoSecond = new MovieDto("Jurassic Park", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDtoSecond))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //get movie
+        MvcResult mvcResult = mockMvc.perform(get(baseURL + "/movies/" + movieDto.getTitle())
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        String movieDtoString = mvcResult.getResponse().getContentAsString();
+        MovieDto returnedMovieDto = objectMapper.readValue(movieDtoString, MovieDto.class);
+        assertThat("", returnedMovieDto.getTitle(), is(movieDto.getTitle()));
+        assertThat("", returnedMovieDto.getRating(), is(movieDto.getRating()));
     }
 
     /**
@@ -315,7 +337,32 @@ public class MovieIT {
      *
      */
     @Test
-    public void viewNonExistMovieDetails() {
+    @DisplayName("Non exist movie details")
+    public void viewNonExistMovieDetails() throws Exception {
+        String expectedErrorMessage = "No movie found";
+
+        //post one
+        MovieDto movieDto = new MovieDto("Titanic", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //post Second
+        MovieDto movieDtoSecond = new MovieDto("Jurassic Park", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDtoSecond))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //get movie
+        MvcResult mvcResult = mockMvc.perform(get(baseURL + "/movies/" + "blahblahblah")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isNotFound())
+                .andReturn();
+        String errorMessage = mvcResult.getResponse().getErrorMessage();
+        assertThat("", errorMessage, is(expectedErrorMessage));
     }
 }
 

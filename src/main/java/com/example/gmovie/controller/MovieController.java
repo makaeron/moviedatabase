@@ -3,11 +3,10 @@ package com.example.gmovie.controller;
 import com.example.gmovie.model.Movie;
 import com.example.gmovie.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.JsonPath;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,7 @@ public class MovieController {
         List<Movie> movieList = movieService.view();
         List<MovieDto> movieDtoList = movieList.stream()
                 .map(m -> new MovieDto(m.getTitle(), m.getRating()))
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
         return movieDtoList;
     }
 
@@ -32,10 +31,13 @@ public class MovieController {
     @ResponseStatus(HttpStatus.OK)
     public MovieDto view(@PathVariable String title) {
         Movie movie = movieService.view(title);
-        MovieDto movieDto = new MovieDto();
-        movieDto.setTitle(movie.getTitle());
-        movieDto.setRating(movie.getRating());
-        return movieDto;
+        if (movie != null) {
+            MovieDto movieDto = new MovieDto();
+            movieDto.setTitle(movie.getTitle());
+            movieDto.setRating(movie.getRating());
+            return movieDto;
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No movie found");
     }
 
     @PostMapping("/movies")
@@ -50,12 +52,12 @@ public class MovieController {
     }
 
     @PutMapping("/movies")
-    public MovieDto update(@RequestBody MovieDto movieDto){
+    public MovieDto update(@RequestBody MovieDto movieDto) {
         Movie movie = new Movie();
         //movie.setRating(movieDto.getRating();
-        movieService.setRating(movieDto.getTitle(),movieDto.getRating());
+        movieService.setRating(movieDto.getTitle(), movieDto.getRating());
         Movie updateMovie = movieService.view(movieDto.getTitle());
-        MovieDto updatedMovieDto = new MovieDto(updateMovie.getTitle(),updateMovie.getRating());
+        MovieDto updatedMovieDto = new MovieDto(updateMovie.getTitle(), updateMovie.getRating());
         return updatedMovieDto;
     }
 }
