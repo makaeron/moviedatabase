@@ -107,19 +107,69 @@ public class MovieIT {
      */
     @Test
     @DisplayName("Visit a movie when DB has many movie")
-    public void visitAMovieWhenDbHasManyMovies() {
+    public void visitAMovieWhenDbHasManyMovies() throws Exception {
+        //post one
+        MovieDto movieDto = new MovieDto("Titanic", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //post Second
+        MovieDto movieDtoSecond = new MovieDto("Jurassic Park", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDtoSecond))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //get movie
+        MvcResult mvcResultget = mockMvc.perform(get(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        //Validate for First
+        String movieDtoString = mvcResultget.getResponse().getContentAsString();
+        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {});
+        assertThat("", returnedMovieDtoList.size(), is(2));
+        assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
     }
 
     /**
      * Given the GBDB has many movies
      * When I visit GMDB movies
-     * Then I should see a list with that movie
+         * Then I should see a list with that movie
      */
     @Test
     @DisplayName("Visit all movies when DB has many movie")
-    public void visitWhenDbHasManyMovies() {
+    public void visitWhenDbHasManyMovies() throws Exception {
+        //post one
+        MovieDto movieDto = new MovieDto("Titanic", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDto))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //post Second
+        MovieDto movieDtoSecond = new MovieDto("Jurassic Park", 5.0f);
+        mockMvc.perform(post(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(movieDtoSecond))
+        ).andExpect(status().isCreated()
+        ).andReturn();
+        //get movie
+        MvcResult mvcResultget = mockMvc.perform(get(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        //Validate for First
+        String movieDtoString = mvcResultget.getResponse().getContentAsString();
+        List<MovieDto> returnedMovieDtoList = objectMapper.readValue(movieDtoString, new TypeReference<ArrayList<MovieDto>>() {});
+        assertThat("", returnedMovieDtoList.size(), is(2));
+        assertThat("", returnedMovieDtoList.get(0).getTitle(), is(movieDto.getTitle()));
+        assertThat("", returnedMovieDtoList.get(1).getTitle(), is(movieDtoSecond.getTitle()));
     }
-
     /**
      * Given an existing movie
      * When I submit a 5 star rating
@@ -128,6 +178,7 @@ public class MovieIT {
     @Test
     @DisplayName("Submit rating for a movie")
     public void submitRatingAndSeeDetails() {
+
     }
 
     /**
