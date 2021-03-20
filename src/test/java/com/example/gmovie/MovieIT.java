@@ -1,34 +1,59 @@
 package com.example.gmovie;
 
+import com.example.gmovie.controller.MovieDto;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.List;
+
+import static java.util.Optional.empty;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class GmovieIT {
+public class MovieIT {
+    private static final String baseURL = "/gm/v1";
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     /**
-     *     Given the GBDB is empty
-     *     When I visit GMDB movies
-     *     Then I should see no movies
+     * Given the GBDB is empty
+     * When I visit GMDB movies
+     * Then I should see no movies
      */
     @Test
     @DisplayName("No Movie")
-    public void noMovie() {
+    public void noMovie() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(baseURL + "/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String movieDtoString = mvcResult.getResponse().getContentAsString();
+        assertThat(movieDtoString, is("[]"));
     }
 
     /**
-     *     Given a new movie has released
-     *     When I submit this new movie to GMDB movies
-     *     Then I should see that movie in GMDB movies
+     * Given a new movie has released
+     * When I submit this new movie to GMDB movies
+     * Then I should see that movie in GMDB movies
      */
     @Test
     @DisplayName("Submit a movie")
@@ -37,9 +62,9 @@ public class GmovieIT {
     }
 
     /**
-     *     Given the GBDB has a movie
-     *     When I visit GMDB movies
-     *     Then I should see that movie in GMDB movies
+     * Given the GBDB has a movie
+     * When I visit GMDB movies
+     * Then I should see that movie in GMDB movies
      */
     @Test
     @DisplayName("Visit when DB has one movie")
@@ -47,9 +72,9 @@ public class GmovieIT {
     }
 
     /**
-     *     Given the GBDB has many movies
-     *     When I visit GMDB movies
-     *     Then I should see that movie in GMDB movies
+     * Given the GBDB has many movies
+     * When I visit GMDB movies
+     * Then I should see that movie in GMDB movies
      */
     @Test
     @DisplayName("Visit a movie when DB has many movie")
@@ -57,9 +82,9 @@ public class GmovieIT {
     }
 
     /**
-     *    Given the GBDB has many movies
-     *     When I visit GMDB movies
-     *     Then I should see a list with that movie
+     * Given the GBDB has many movies
+     * When I visit GMDB movies
+     * Then I should see a list with that movie
      */
     @Test
     @DisplayName("Visit all movies when DB has many movie")
