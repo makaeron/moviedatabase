@@ -139,7 +139,7 @@ public class MovieServicesTest {
         //Execution
         movieService.submit(terminator);
         Movie movie = movieService.view(terminator.getTitle());
-        assertThat(movie.getRating(),is(5));
+        assertThat(movie.getRating(),is(5.0F));
         assertThat(movie,is(terminator));
     }
 
